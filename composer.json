@@ -1,0 +1,52 @@
+{
+    "name": "aslam/laravel-rpx",
+    "description": "RPX API",
+    "keywords": [
+        "laravel-rpx",
+        "rpx-api",
+        "laravel-kurir-rpx"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aslam",
+            "email": "iupin5212@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Aslam\\Rpx\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Aslam\\Rpx\\Providers\\Rpx"
+            ],
+            "aliases": {
+                "Rpx": "Aslam\\Rpx\\Facades\\Rpx"
+            }
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aslam\\Bca\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "sort-packages": true
+    },
+    "require": {
+        "aslam/response": "^1.0",
+        "php": ">=7.2|^8.0",
+        "guzzlehttp/guzzle": "^7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
