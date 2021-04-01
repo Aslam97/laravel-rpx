@@ -23,6 +23,13 @@ if (!function_exists('rpx')) {
 
 if (!function_exists('rpx_xml')) {
 
+    /**
+     * build_rpx_xml
+     *
+     * @param  string $methodName
+     * @param  array $rpxElement
+     * @return \DOMDocument
+     */
     function build_rpx_xml(string $methodName, array $rpxElement)
     {
         $dom = new DOMDocument();
@@ -74,8 +81,6 @@ if (!function_exists('rpx_xml')) {
             $method->appendChild($field);
         }
 
-        $outXML = $dom->saveXML($dom->documentElement);
-
-        return $outXML;
+        return $dom->saveXML($dom->documentElement);
     }
 }
