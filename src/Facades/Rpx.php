@@ -8,6 +8,6 @@ class Rpx extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'RpxAPI';
+        return 'Rpx';
     }
 }
