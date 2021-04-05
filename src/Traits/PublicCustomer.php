@@ -1,10 +1,8 @@
 <?php
 
-namespace Aslam\Rpx\Modules;
+namespace Aslam\Rpx\Traits;
 
-use Aslam\Rpx\Rpx;
-
-class NonCustomer extends Rpx
+trait PublicCustomer
 {
     /**
      * getProvince

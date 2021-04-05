@@ -5,12 +5,16 @@ namespace Aslam\Rpx;
 use Aslam\Response\ConnectionException;
 use Aslam\Response\RequestException;
 use Aslam\Response\Response;
+use Aslam\Traits;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\HandlerStack;
 
 class Rpx
 {
+    use Traits\PublicCustomer;
+    use Traits\Customer;
+
     /**
      * apiUrl
      *
@@ -54,13 +58,6 @@ class Rpx
     private $namespace;
 
     /**
-     * modulePath
-     *
-     * @var string
-     */
-    private $modulePath = 'Aslam\\Rpx\\Modules\\';
-
-    /**
      * __construct
      *
      * @return void
@@ -87,7 +84,6 @@ class Rpx
     public function send(string $httpMethod, string $uniformResourceName, array $data = [])
     {
         try {
-
             return tap(
                 new Response($this->buildClient($uniformResourceName, $data)->request($httpMethod, $this->apiUrl)),
                 function ($response) {
@@ -179,18 +175,6 @@ class Rpx
         return tap($this, function ($request) use ($namespace) {
             $this->namespace = $namespace;
         });
-    }
-
-    /**
-     * Dynamically bind class
-     *
-     * @param  string $moduleName
-     * @return \Aslam\Rpx\Modules
-     */
-    public function module($moduleName)
-    {
-        $service = $this->modulePath . $moduleName;
-        return new $service;
     }
 
     /**

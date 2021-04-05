@@ -21,7 +21,7 @@ if (!function_exists('rpx')) {
     }
 }
 
-if (!function_exists('rpx_xml')) {
+if (!function_exists('build_rpx_xml')) {
 
     /**
      * build_rpx_xml
