@@ -27,7 +27,7 @@ class Rpx
      *
      * @var string
      */
-    protected $accountNumber;
+    protected $account_number;
 
     /**
      * username
@@ -65,7 +65,7 @@ class Rpx
     public function __construct()
     {
         $this->apiUrl = config('rpx.api_url');
-        $this->accountNumber = config('rpx.account_number');
+        $this->account_number = config('rpx.account_number');
         $this->username = config('rpx.username');
         $this->password = config('rpx.password');
         $this->format = config('rpx.format');
@@ -111,10 +111,13 @@ class Rpx
      */
     public function buildClient(string $uniformResourceName, array $data)
     {
-        $xml = build_rpx_xml(
-            $uniformResourceName,
-            array_merge($cd = array_merge($this->credentials(), $data), $this->responseFormat())
-        );
+        $fields = array_merge($cd = array_merge($this->credentials(), $data), $this->responseFormat());
+
+        if (in_array($uniformResourceName, $this->accountNumberMethods())) {
+            $fields = array_merge($fields, ['account_number' => $this->account_number]);
+        }
+
+        $xml = build_rpx_xml($uniformResourceName, $fields);
 
         return new Client([
             'handler' => $this->buildHandlerStack(),
@@ -187,6 +190,18 @@ class Rpx
     }
 
     /**
+     * List all method that available for account number
+     *
+     * @return array
+     */
+    public function accountNumberMethods()
+    {
+        return [
+            'getRatesPostalCode',
+        ];
+    }
+
+    /**
      * credentials
      *
      * @return array
@@ -202,12 +217,27 @@ class Rpx
     /**
      * responseFormat
      *
-     * @return void
+     * @return array
      */
     public function responseFormat()
     {
         return [
             'format' => $this->format,
+        ];
+    }
+
+    /**
+     * List all deprecated method for public customers
+     *
+     * @return array
+     */
+    public function publicDeprecatedMethods()
+    {
+        return [
+            'getRPXOffice',
+            'getClearanceAWB',
+            'getRouteOrigin',
+            'getRouteDestination',
         ];
     }
 }

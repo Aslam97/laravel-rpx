@@ -5,7 +5,7 @@ namespace Aslam\Rpx\Traits;
 trait PublicCustomer
 {
     /**
-     * getProvince
+     *  Get Provinces of RPX Office located.
      *
      * @return \Aslam\Response\Response
      */
@@ -15,7 +15,7 @@ trait PublicCustomer
     }
 
     /**
-     * getCity
+     * Get List of City for Destination Shipping
      *
      * @param  string $province
      * @return \Aslam\Response\Response
@@ -26,7 +26,7 @@ trait PublicCustomer
     }
 
     /**
-     * getService
+     * Get Service Type for Shipping
      *
      * @return \Aslam\Response\Response
      */
@@ -36,7 +36,7 @@ trait PublicCustomer
     }
 
     /**
-     * getOrigin
+     * Get Origin City for Shipping
      *
      * @return \Aslam\Response\Response
      */
@@ -46,7 +46,7 @@ trait PublicCustomer
     }
 
     /**
-     * getDestination
+     * Get Destination City for Shipping
      *
      * @return \Aslam\Response\Response
      */
@@ -56,7 +56,7 @@ trait PublicCustomer
     }
 
     /**
-     * getRates
+     * Get RPX Domestic Rates from Origin to Destination with a Specific Weight and Discount
      *
      * @param  string $origin
      * @param  string $destination
@@ -77,7 +77,7 @@ trait PublicCustomer
     }
 
     /**
-     * getRatesPostalCode
+     * Get RPX Domestic Rates from Origin Postal Code to Destination Postal Code with a Specific Weight and Discount
      *
      * @param  string $origin_postal_code
      * @param  string $destination_postal_code
@@ -93,17 +93,57 @@ trait PublicCustomer
         float $weight = null,
         float $disc = null
     ) {
-        $data = compact('origin_postal_code', 'destination_postal_code', 'service_type', 'weight', 'disc');
+        $data = compact(
+            'origin_postal_code',
+            'destination_postal_code',
+            'service_type',
+            'weight',
+            'disc',
+            'account_number'
+        );
+
         return $this->send('POST', 'getRatesPostalCode', $data);
     }
 
-    public function getTrackingAWB()
+    /**
+     * Get Tracking Data from an AWB
+     *
+     * @param  string $awb
+     * @return \Aslam\Response\Response
+     */
+    public function getTrackingAWB(string $awb)
     {
-
+        return $this->send('POST', 'getTrackingAWB', compact('awb'));
     }
 
-    public function getClearanceAWB()
+    /**
+     * Get List of Postal Code (“city_id” input is Optional, Taken from Service “getCity”)
+     *
+     * @param  string|null $city_id
+     * @param  string|null $cod_area
+     * @param  string|null $service_type
+     * @return \Aslam\Response\Response
+     */
+    public function getPostalCode(string $city_id = null, string $cod_area = null, string $service_type = null)
     {
+        $data = [
+            'city_id' => $city_id,
+            'format' => $this->format,
+            'cod_area' => $cod_area,
+            'service_type' => $service_type,
+        ];
 
+        return $this->send('POST', 'getPostalCode', $data);
+    }
+
+    /**
+     * Get List of AWB by Reference Number
+     *
+     * @param  mixed $reference_no
+     * @return \Aslam\Response\Response
+     */
+    public function getAWBbyReference(string $reference_no)
+    {
+        return $this->send('POST', 'getAWBbyReference', compact('reference_no'));
     }
 }
