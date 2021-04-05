@@ -51,6 +51,20 @@ class Rpx
     protected $format;
 
     /**
+     * useFormat
+     *
+     * @var bool
+     */
+    protected $useFormat = true;
+
+    /**
+     * asXML
+     *
+     * @var bool
+     */
+    protected $asXML = false;
+
+    /**
      * Namespace
      *
      * @var string
@@ -111,10 +125,13 @@ class Rpx
      */
     public function buildClient(string $uniformResourceName, array $data)
     {
-        $xml = build_rpx_xml(
-            $uniformResourceName,
-            array_merge($cd = array_merge($this->credentials(), $data), $this->responseFormat())
-        );
+        $fields = array_merge($this->credentials(), $data);
+
+        if ($this->useFormat) {
+            $fields = array_merge($fields, $this->responseFormat());
+        }
+
+        $xml = build_rpx_xml($uniformResourceName, $fields);
 
         return new Client([
             'handler' => $this->buildHandlerStack(),
@@ -156,14 +173,21 @@ class Rpx
                     $doc->loadXML((string) $response->getBody());
 
                     $xpath = new \DOMXPath($doc);
-                    $xpath->registerNamespace('ns1', 'urn:rpxwsdl');
 
-                    $item = $xpath->query("/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:{$this->namespace}/return");
-                    $decode = json_decode($item->item(0)->textContent, true);
+                    if ($this->asXML) {
+                        $item = $xpath->query("/SOAP-ENV:Envelope/SOAP-ENV:Body");
+                        $loadXML = simplexml_load_string($item->item(0)->textContent, "SimpleXMLElement", LIBXML_NOCDATA);
+                        $responseData = json_encode($loadXML);
+                    } else {
+                        $item = $xpath->query("/SOAP-ENV:Envelope/SOAP-ENV:Body");
+                        $responseData = $item->item(0)->textContent;
+                    }
+
+                    $decode = json_decode($responseData, true);
 
                     $result = is_null($decode)
                     ? json_encode(['RPX' => ['DATA' => 'No Data Found']])
-                    : $item->item(0)->textContent;
+                    : $responseData;
 
                     $streamBody = fopen('data://text/plain,' . $result, 'r');
                     return $response->withBody(new \GuzzleHttp\Psr7\Stream($streamBody));
@@ -183,6 +207,43 @@ class Rpx
     {
         return tap($this, function ($request) use ($namespace) {
             $this->namespace = $namespace;
+        });
+    }
+
+    /**
+     * disableFormat
+     *
+     * @return $this
+     */
+    public function disableFormat()
+    {
+        return tap($this, function ($request) {
+            $this->useFormat = false;
+        });
+    }
+
+    /**
+     * Set response is xml
+     *
+     * @return $this
+     */
+    public function asXML()
+    {
+        return tap($this, function ($request) {
+            $this->asXML = true;
+        });
+    }
+
+    /**
+     * Override account number from config
+     *
+     * @param  string $accountNumber
+     * @return $this
+     */
+    public function withAccountNumber(string $accountNumber)
+    {
+        return tap($this, function ($request) use ($accountNumber) {
+            $this->account_number = $accountNumber;
         });
     }
 
@@ -223,6 +284,18 @@ class Rpx
             'getClearanceAWB',
             'getRouteOrigin',
             'getRouteDestination',
+        ];
+    }
+
+    /**
+     * List all method that return XML even if requested format is JSON
+     *
+     * @return array
+     */
+    public function methodReturnXML()
+    {
+        return [
+            'getRevenue',
         ];
     }
 }

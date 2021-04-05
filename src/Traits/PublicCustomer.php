@@ -22,7 +22,10 @@ trait PublicCustomer
      */
     public function getCity(string $province = '')
     {
-        return $this->send('POST', 'getCity', compact('province'));
+        $format = $this->format;
+        $data = compact('format', 'province');
+
+        return $this->send('POST', 'getCity', $data);
     }
 
     /**
