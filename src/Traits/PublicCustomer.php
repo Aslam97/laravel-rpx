@@ -93,12 +93,15 @@ trait PublicCustomer
         float $weight = null,
         float $disc = null
     ) {
+        $format = $this->format;
+        $account_number = $this->account_number;
         $data = compact(
             'origin_postal_code',
             'destination_postal_code',
             'service_type',
             'weight',
             'disc',
+            'format',
             'account_number'
         );
 
@@ -126,12 +129,13 @@ trait PublicCustomer
      */
     public function getPostalCode(string $city_id = null, string $cod_area = null, string $service_type = null)
     {
-        $data = [
-            'city_id' => $city_id,
-            'format' => $this->format,
-            'cod_area' => $cod_area,
-            'service_type' => $service_type,
-        ];
+        $format = $this->format;
+        $data = compact(
+            'city_id',
+            'format',
+            'cod_area',
+            'service_type'
+        );
 
         return $this->send('POST', 'getPostalCode', $data);
     }

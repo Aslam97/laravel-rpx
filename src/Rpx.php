@@ -111,13 +111,10 @@ class Rpx
      */
     public function buildClient(string $uniformResourceName, array $data)
     {
-        $fields = array_merge($cd = array_merge($this->credentials(), $data), $this->responseFormat());
-
-        if (in_array($uniformResourceName, $this->accountNumberMethods())) {
-            $fields = array_merge($fields, ['account_number' => $this->account_number]);
-        }
-
-        $xml = build_rpx_xml($uniformResourceName, $fields);
+        $xml = build_rpx_xml(
+            $uniformResourceName,
+            array_merge($cd = array_merge($this->credentials(), $data), $this->responseFormat())
+        );
 
         return new Client([
             'handler' => $this->buildHandlerStack(),
@@ -187,18 +184,6 @@ class Rpx
         return tap($this, function ($request) use ($namespace) {
             $this->namespace = $namespace;
         });
-    }
-
-    /**
-     * List all method that available for account number
-     *
-     * @return array
-     */
-    public function accountNumberMethods()
-    {
-        return [
-            'getRatesPostalCode',
-        ];
     }
 
     /**
