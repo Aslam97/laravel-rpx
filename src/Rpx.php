@@ -5,7 +5,7 @@ namespace Aslam\Rpx;
 use Aslam\Response\ConnectionException;
 use Aslam\Response\RequestException;
 use Aslam\Response\Response;
-use Aslam\Traits;
+use Aslam\Rpx\Traits;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\HandlerStack;
