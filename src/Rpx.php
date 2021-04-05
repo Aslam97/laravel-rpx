@@ -85,7 +85,11 @@ class Rpx
     {
         try {
             return tap(
-                new Response($this->buildClient($uniformResourceName, $data)->request($httpMethod, $this->apiUrl)),
+                new Response(
+                    $this->withNamespace($uniformResourceName . 'Response')
+                        ->buildClient($uniformResourceName, $data)
+                        ->request($httpMethod, $this->apiUrl)
+                ),
                 function ($response) {
                     if (!$response->successful()) {
                         $response->throw();
@@ -109,7 +113,7 @@ class Rpx
     {
         $xml = build_rpx_xml(
             $uniformResourceName,
-            array_merge($this->defaultData(), $data)
+            array_merge($cd = array_merge($this->credentials(), $data), $this->responseFormat())
         );
 
         return new Client([
@@ -149,14 +153,19 @@ class Rpx
                 return $promise->then(function ($response) {
 
                     $doc = new \DOMDocument('1.0', 'ISO-8859-1');
-                    $doc->loadXML($response->getBody()->__toString());
+                    $doc->loadXML((string) $response->getBody());
 
                     $xpath = new \DOMXPath($doc);
                     $xpath->registerNamespace('ns1', 'urn:rpxwsdl');
 
                     $item = $xpath->query("/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:{$this->namespace}/return");
+                    $decode = json_decode($item->item(0)->textContent, true);
 
-                    $streamBody = fopen('data://text/plain,' . $item->item(0)->textContent, 'r');
+                    $result = is_null($decode)
+                    ? json_encode(['RPX' => ['DATA' => 'No Data Found']])
+                    : $item->item(0)->textContent;
+
+                    $streamBody = fopen('data://text/plain,' . $result, 'r');
                     return $response->withBody(new \GuzzleHttp\Psr7\Stream($streamBody));
                 }
                 );
@@ -178,15 +187,26 @@ class Rpx
     }
 
     /**
-     * defaultData
+     * credentials
      *
      * @return array
      */
-    public function defaultData()
+    public function credentials()
     {
         return [
             'user' => $this->username,
             'password' => $this->password,
+        ];
+    }
+
+    /**
+     * responseFormat
+     *
+     * @return void
+     */
+    public function responseFormat()
+    {
+        return [
             'format' => $this->format,
         ];
     }
