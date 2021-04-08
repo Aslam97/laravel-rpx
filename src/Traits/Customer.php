@@ -58,7 +58,7 @@ trait Customer
      */
     public function sendShipmentData(array $fields)
     {
-        return $this->send('POST', 'sendShipmentData', $fields);
+        return $this->asXML()->send('POST', 'sendShipmentData', $fields);
     }
 
     /**
