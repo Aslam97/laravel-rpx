@@ -49,4 +49,37 @@ trait Customer
 
         return $this->send('POST', 'getCustomerRates', $data);
     }
+
+    /**
+     * Send shipment data
+     *
+     * @param  array $fields
+     * @return \Aslam\Response\Response
+     */
+    public function sendShipmentData(array $fields)
+    {
+        return $this->send('POST', 'sendShipmentData', $fields);
+    }
+
+    /**
+     * Send pickup request
+     *
+     * @param  array $fields
+     * @return \Aslam\Response\Response
+     */
+    public function sendPickupRequest(array $fields)
+    {
+        return $this->send('POST', 'sendPickupRequest', $fields);
+    }
+
+    /**
+     * Void the shipment data
+     *
+     * @param  array $fields
+     * @return \Aslam\Response\Response
+     */
+    public function voidShipmentData(array $fields)
+    {
+        return $this->send('POST', 'voidShipmentData', $fields);
+    }
 }
