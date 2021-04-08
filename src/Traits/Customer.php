@@ -31,11 +31,11 @@ trait Customer
      * @return \Aslam\Response\Response
      */
     public function getCustumerRates(
-        string $service_type = null,
+        ?string $service_type,
         string $origin,
         string $destination,
-        float $weight = null,
-        float $disc = null
+        ?float $weight,
+        ?float $disc
     ) {
         $account_number = $this->account_number;
         $data = compact(
