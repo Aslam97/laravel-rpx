@@ -71,9 +71,9 @@ trait PublicCustomer
     public function getRates(
         string $origin,
         string $destination,
-        string $service_type = '',
-        float $weight = null,
-        float $disc = null
+        ?string $service_type,
+        ?float $weight,
+        ?float $disc
     ) {
         $data = compact('origin', 'destination', 'service_type', 'weight', 'disc');
         return $this->send('POST', 'getRates', $data);
@@ -92,9 +92,9 @@ trait PublicCustomer
     public function getRatesPostalCode(
         string $origin_postal_code,
         string $destination_postal_code,
-        string $service_type = '',
-        float $weight = null,
-        float $disc = null
+        ?string $service_type,
+        ?float $weight,
+        ?float $disc
     ) {
         $format = $this->format;
         $account_number = $this->account_number;
@@ -130,7 +130,7 @@ trait PublicCustomer
      * @param  string|null $service_type
      * @return \Aslam\Response\Response
      */
-    public function getPostalCode(string $city_id = null, string $cod_area = null, string $service_type = null)
+    public function getPostalCode(?string $city_id, ?string $cod_area, ?string $service_type)
     {
         $format = $this->format;
         $data = compact(
