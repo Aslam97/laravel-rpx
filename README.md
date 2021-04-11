@@ -1,4 +1,4 @@
-# Laravel Bank RPX
+# Laravel RPX
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/aslam/laravel-rpx.svg?style=flat-square)](https://packagist.org/packages/aslam/laravel-rpx)
